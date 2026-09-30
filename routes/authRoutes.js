@@ -2,17 +2,22 @@ const express = require('express');
 
 const router = express.Router(); 
 
-//edit
 const { register, login, getProfile } = require('../controllers/authController'); 
 
-//edit
 const { protect } = require('../middleware/authMiddleware'); 
 
-router.post('/register', register); 
+/*edit*/
+const { validateRegisterInput, validateLoginInput } = require('../middleware/validateAuthInput'); 
 
-router.post('/login', login); 
+/*edit*/
+const { authLimiter } = require('../middleware/rateLimiters'); 
 
-//edit
+/*edit*/
+router.post('/register', authLimiter, validateRegisterInput, register); 
+
+/*edit*/
+router.post('/login', authLimiter, validateLoginInput, login);  
+
 router.get('/me', protect, getProfile); 
 
 module.exports = router; 
